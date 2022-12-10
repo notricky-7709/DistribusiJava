@@ -1,13 +1,14 @@
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
 public class distribusi {
     static Scanner input = new Scanner(System.in);
-    /*static int[][] gudang;
+    static int[][] gudang;
     static int[][] toko;
-    static String[] label_produk;*/
+    static String[] label_produk;
 
     //Dummy data
-    static int[][] gudang = {
+    /*static int[][] gudang = {
             {1 , 3, 5, 7},
             {6, 8, 4, 5},
             {9, 1, 3, 2},
@@ -19,10 +20,11 @@ public class distribusi {
             {7, 8, 1, 2},
             {2, 3, 1, 4},
     };
-    static String[] label_produk = {"Lifebuoy","Dettol","Garnier","Ponds"};
+    static String[] label_produk = {"Lifebuoy","Dettol","Garnier","Ponds"};*/
 
     //Fungsi untuk data persediaan gudang dan keperluan toko, dan nama toko dan produk
-    static void inputData(){ //Mengisi Tabel awal
+    static void inputData(){
+        //Mengisi Tabel awal
 
         //Input data
         int n_gudang, n_toko, n_produk;
@@ -31,11 +33,10 @@ public class distribusi {
         System.out.print("Masukkan jumlah jenis produk yang tersedia: ");
         n_produk = input.nextInt();
         label_produk = new String[n_produk];
-        transition();
+        input.nextLine();
         for(int i = 0; i < label_produk.length; i++){
             System.out.printf("Masukkan nama produk %d: ", i + 1);
             label_produk[i] = input.nextLine();
-            System.out.println();
         }
         transition();
 
@@ -44,14 +45,14 @@ public class distribusi {
         System.out.print("Masukkan jumlah gudang: ");
         n_gudang = input.nextInt();
         gudang = new int[n_gudang][n_produk];
-        transition();
+        input.nextLine();
         for(int i = 0; i < gudang.length; i++){
             System.out.printf("Masukkan stok gudang %d: \n", i + 1);
             for(int j = 0; j < gudang[0].length; j++){
                 System.out.printf("Stok %s: ", label_produk[j]);
                 gudang[i][j] = input.nextInt();
             }
-            transition();
+            input.nextLine();
         }
         transition();
 
@@ -60,14 +61,14 @@ public class distribusi {
         System.out.print("Masukkan jumlah toko: ");
         n_toko = input.nextInt();
         toko = new int[n_toko][n_produk];
-        transition();
+        input.nextLine();
         for(int i = 0; i < toko.length; i++){
             System.out.printf("Masukkan stok toko %d: \n", i + 1);
             for(int j = 0; j < toko[0].length; j++){
                 System.out.printf("Stok %s: ", label_produk[j]);
                 toko[i][j] = input.nextInt();
             }
-            transition();
+            input.nextLine();
         }
         transition();
         menuPage();
@@ -75,11 +76,11 @@ public class distribusi {
     static void menuPage(){
         int pick;
         System.out.println("Menu:");
-        System.out.printf("%1. Read Data");
-        System.out.printf("%2. Update Data");
-        System.out.printf("%3. Delete Data");
+        System.out.println("1. Read Data");
+        System.out.println("2. Distribusikan stok");
+        System.out.println("3. Input Ulang Data");
         System.out.println();
-        System.out.printf("%4. Distribusikan stok");
+        System.out.println("4. Keluar");
         System.out.println("\n\n");
         System.out.println("Masukkan apa yang ingin dilakukan: ");
         pick = input.nextInt();
@@ -88,15 +89,14 @@ public class distribusi {
             case 1:
                 readData();
             case 2:
-                editData();
-            case 3:
-                deleteData();
-            case 4:
                 StockDistribution();
+            case 3:
+                inputData();
+            case 4:
+                endApp();
             default:
                 System.out.println("Input Salah");
-                System.out.println("Tekan ENTER untuk kembali...");
-                input.nextLine();
+                pause();
                 transition();
                 menuPage();
         }
@@ -105,8 +105,8 @@ public class distribusi {
     static void readData(){
         int pick;
         System.out.println("Menu - Read:");
-        System.out.println("1. Tabel Gudang");
-        System.out.println("2. Tabel Toko");
+        System.out.println("1. Stok Gudang");
+        System.out.println("2. Permintaan Toko");
         System.out.println("3. Daftar Produk");
         System.out.println();
         System.out.println("4. Kembali ke menu");
@@ -116,48 +116,89 @@ public class distribusi {
         transition();
         switch (pick){
             case 1:
-                readData();
+                readGudang();
             case 2:
-                editData();
+                readToko();
             case 3:
-                deleteData();
+                listProduk();
             case 4:
                 menuPage();
             default:
                 System.out.println("Input Salah");
-                System.out.println("Tekan ENTER untuk kembali...");
-                input.nextLine();
+                pause();
                 transition();
                 readData();
         }
     }
-    static void editData(){
-
+    //Menampilkan tabel stok gudang
+    static void printGudang(){
+        System.out.printf("|| %-15s ||", "Nama gudang");
+        for(int i = 0; i < label_produk.length; i++){
+            System.out.printf(" %-10s||", label_produk[i]);
+        }
+        System.out.println();
+        //Konten tabel
+        for(int i = 0; i < gudang.length; i++){
+            System.out.printf("|| %-15s ||", ("gudang" + (i + 1)));
+            for(int j = 0; j < gudang[0].length; j++){
+                System.out.printf(" %-10d||", gudang[i][j]);
+            }
+            System.out.println();
+        }
     }
-    static void deleteData() {
-
+    static void printToko(){
+        System.out.printf("|| %-15s ||", "Nama toko");
+        for(int i = 0; i < label_produk.length; i++){
+            System.out.printf(" %-10s||", label_produk[i]);
+        }
+        System.out.println();
+        //Konten tabel
+        for(int i = 0; i < toko.length; i++){
+            System.out.printf("|| %-15s ||", ("toko" + (i + 1)));
+            for(int j = 0; j < toko[0].length; j++){
+                System.out.printf(" %-10d||", toko[i][j]);
+            }
+            System.out.println();
+        }
+    }
+    static void printProduk(){
+        System.out.println("List Produk:");
+        for(int i = 0; i < label_produk.length; i++){
+            System.out.printf("%d. %s\n", (i+1), label_produk[i]);
+        }
     }
     static void readGudang(){
-        //Membuat format tabel
-        String tableformat = "| %-15s |"; // "| %-15s | $-4d|%n"
-        for(int i = 0; i < gudang[0].length; i++){
-            tableformat += ("$-4d|");
-        }
-        tableformat += "%n";
+        printGudang();
+        pause();
+        transition();
+        readData();
     }
+    //Menampilkan tabel permintaan toko
     static void readToko(){
-
+        printToko();
+        pause();
+        transition();
+        readData();
     }
-    static void readProduk(){
-
+    static void pause(){
+        System.out.print("Tekan ENTER untuk kembali...");
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    static void listProduk(){
+        printProduk();
+        transition();
+        readData();
     }
     static void transition(){
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        System.out.println("=================");
+        System.out.println("=================");
     }
     //Fungsi untuk menunjukkan proses distribusi
     static void StockDistribution(){
-        //
         int[][] sisa_gudang = gudang;
 
         for(int i = 0; i < toko[0].length; i++){
@@ -198,12 +239,15 @@ public class distribusi {
 
             }
         }
+        pause();
+        transition();
+        menuPage();
+    }
+    static void endApp(){
+        System.out.println("Terima kasih telah menggunakan");
+        System.exit(0);
     }
     public static void main(String[] args){
-        //
-        StockDistribution();
-
-
-
+        inputData();
     }
 }
